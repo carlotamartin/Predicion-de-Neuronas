@@ -1,4 +1,5 @@
 from numpy import exp, array, random
+import matplotlib.pyplot as plt
 
 
 class percepton():
@@ -11,6 +12,7 @@ class percepton():
         self.wb = 0
         self.txAprendizaje = 0.1
         self.epochs = 300000
+        self.Grafica_MSE = []
 
 
     def pes_inicial (self):
@@ -20,28 +22,28 @@ class percepton():
         peso = [w11, w21, w31, self.wb]
         return  peso
 
-    def suma_ponderada(X1,W11,X2,W21,B,WB):
+    def suma_ponderada(self, X1,W11,X2,W21,B,WB):
         return (B*WB+( X1*W11 + X2*W21))
 
-    def funcion_activacion_sigmoide(valor_suma_ponderada):
+    def funcion_activacion_sigmoide(self, valor_suma_ponderada):
         return (1 / (1 + exp(-valor_suma_ponderada)))
 
-    def funcion_activacion_relu(valor_suma_ponderada):
+    def funcion_activacion_relu(self, valor_suma_ponderada):
         return (max(0,valor_suma_ponderada))
 
-    def error_lineal(valor_esperado, valor_predicho):
+    def error_lineal(self, valor_esperado, valor_predicho):
         return (valor_esperado-valor_predicho)
 
-    def calculo_gradiente(valor_entrada,prediccion,error):
+    def calculo_gradiente(self,valor_entrada,prediccion,error):
         return (-1 * error * prediccion * (1-prediccion) * valor_entrada)
 
-    def calculo_valor_ajuste(valor_gradiente, tasa_aprendizaje):
+    def calculo_valor_ajuste(self,valor_gradiente, tasa_aprendizaje):
         return (valor_gradiente*tasa_aprendizaje)
 
-    def calculo_nuevo_peso (valor_peso, valor_ajuste):
+    def calculo_nuevo_peso (self,valor_peso, valor_ajuste):
         return (valor_peso - valor_ajuste)
 
-    def calculo_MSE(predicciones_realizadas, predicciones_esperadas):
+    def calculo_MSE(self, predicciones_realizadas, predicciones_esperadas):
         i=0;
         suma=0;
         for prediccion in predicciones_esperadas:
@@ -51,3 +53,101 @@ class percepton():
         media_cuadratica = 1 / (len(predicciones_esperadas)) * suma
         return media_cuadratica
 
+    def aprendizaje (self):
+        for epoch in range(0,self.epochs):
+            print("EPOCH ("+str(epoch)+"/"+str(self.epochs)+")")
+            predicciones_realizadas_durante_epoch = [];
+            predicciones_esperadas = [];
+            numObservacion = 0
+            for observacion in self.obs_entr:
+
+                #Carga de la capa de entrada
+                x1 = observacion[0];
+                x2 = observacion[1];
+
+                #Valor de predicción esperado
+                valor_esperado = self.prediccion[numObservacion][0]
+
+                #Etapa 1: Cálculo de la suma ponderada
+                valor_suma_ponderada = suma_ponderada(x1,w11,x2,w21,self.sesgo,wb)
+
+
+                #Etapa 2: Aplicación de la función de activación
+                valor_predicho = funcion_activacion_sigmoide(valor_suma_ponderada)
+
+
+                #Etapa 3: Cálculo del error
+                valor_error = error_lineal(valor_esperado,valor_predicho)
+
+
+                #Actualización del peso 1
+                #Cálculo ddel gradiente del valor de ajuste y del peso nuevo
+                gradiente_W11 = calculo_gradiente(x1,valor_predicho,valor_error)
+                valor_ajuste_W11 = calculo_valor_ajuste(gradiente_W11,txAprendizaje)
+                w11 = calculo_nuevo_peso(w11,valor_ajuste_W11)
+
+                # Actualización del peso 2
+                gradiente_W21 = calculo_gradiente(x2, valor_predicho, valor_error)
+                valor_ajuste_W21 = calculo_valor_ajuste(gradiente_W21, txAprendizaje)
+                w21 = calculo_nuevo_peso(w21, valor_ajuste_W21)
+
+
+                # Actualización del peso del sesgo
+                gradiente_Wb = calculo_gradiente(sesgo, valor_predicho, valor_error)
+                valor_ajuste_Wb = calculo_valor_ajuste(gradiente_Wb, txAprendizaje)
+                wb = calculo_nuevo_peso(wb, valor_ajuste_Wb)
+
+                print("     EPOCH (" + str(epoch) + "/" + str(self.epochs) + ") -  Observación: " + str(numObservacion+1) + "/" + str(len(observaciones_entradas)))
+
+                #Almacenamiento de la predicción realizada:
+                predicciones_realizadas_durante_epoch.append(valor_predicho)
+                predicciones_esperadas.append(predicciones[numObservacion][0])
+
+                #Paso a la observación siguiente
+                numObservacion = numObservacion+1
+
+            MSE = calculo_MSE(predicciones_realizadas_durante_epoch, predicciones)
+            self.Grafica_MSE.append(MSE[0])
+            print("MSE: "+str(MSE))
+
+        array = [w11, w21, wb]
+        return array
+
+    def prediccion(self, x1, w11, x2, w21, wb):
+        #Etapa 1: Cálculo de la suma ponderada
+        valor_suma_ponderada = suma_ponderada(x1,w11,x2,w21,self.sesgo,wb)
+        valor_predicho = funcion_activacion_sigmoide(valor_suma_ponderada)
+
+        print("Predicción del [" + str(x1) + "," + str(x2)  + "]")
+        print("Predicción = " + str(valor_predicho))
+
+    def plot (self):
+        plt.plot(self.Grafica_MSE)
+        plt.ylabel('MSE')
+        plt.show()
+
+
+def main():
+    percept = percepton(array([[1, 0], [1, 1], [0, 1], [0, 0]]), array([[0],[1], [0],[0]]))
+    peso = percept.pes_inicial()
+    print()
+    print()
+    print ("¡Aprendizaje terminado!")
+    print ("Pesos iniciales: " )
+    print ("W11 = "+str(peso[0]))
+    print ("W21 = "+str(peso[1]))
+    print ("Wb = "+str(peso[3]))
+
+    array = percept.aprendizaje()
+    print ("Pesos finales: " )
+    print ("W11 = "+str(array[0]))
+    print ("W21 = "+str(array[1]))
+    print ("Wb = "+str(array[2]))
+
+    print()
+    print("--------------------------")
+    print ("PREDICCIÓN ")
+    print("--------------------------")
+    x1 = 1
+    x2 = 1
+    percept.prediccion(x1, array[0], x2, array[1], array[2])
