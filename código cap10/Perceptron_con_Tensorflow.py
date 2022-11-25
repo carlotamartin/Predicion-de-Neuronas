@@ -31,9 +31,9 @@ valores_a_predecir_Y = [[0.], [1.], [0.], [0.]]
 #-------------------------------------
 #    PARÁMETROS DE LA RED
 #-------------------------------------
-import tensorflow as tf
 
-tf.pl
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 #Variable TensorFLow correspondiente a los valores de neuronas de entrada
 tf_neuronas_entradas_X = tf.placeholder(tf.float32, [None, 2])
 
