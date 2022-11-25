@@ -33,7 +33,7 @@ valores_a_predecir_Y = [[0.], [1.], [0.], [0.]]
 #-------------------------------------
 import tensorflow as tf
 
-
+tf.pl
 #Variable TensorFLow correspondiente a los valores de neuronas de entrada
 tf_neuronas_entradas_X = tf.placeholder(tf.float32, [None, 2])
 
