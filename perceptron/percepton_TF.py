@@ -16,9 +16,9 @@ class percepton():
         sumaponderada = tf.matmul(self.tf_neuronas_entradas_X,self.peso)
         sumaponderada = tf.add(sumaponderada,self.sesgo)
         prediccion = tf.sigmoid(sumaponderada)
+        funcion_error = tf.reduce_sum(tf.pow(self.tf_valores_reales_Y-prediccion,2))
+        return funcion_error
 
-    def funcion_error(self):
-        return tf.reduce_sum(tf.pow(self.tf_valores_reales_Y, self.prediccion,2))
 
     def optimizar(self):
         optimizador = tf.train.GradientDescentOptimizer(learning_rate=0.1).minimize(self.funcion_error)
@@ -61,7 +61,7 @@ class percepton():
 
 def main():
     percept = percepton([[1., 0.], [1., 1.], [0., 1.], [0., 0.]],  [[0.], [1.], [0.], [0.]])
-    funcion_error = percept.funcion_error()
+    funcion_error = percept.sumaponderada()
     optimizador = percept.optimizar()
     graf = percept.aprendizaje(3000, funcion_error, optimizador)
     percept.plot()
