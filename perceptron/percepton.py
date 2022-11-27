@@ -3,14 +3,13 @@ import matplotlib.pyplot as plt
 
 
 class percepton():
-    def __init__ (self, obs_entr, prediccion, sesgo):
-        self.obs_entr = obs_entr
+    def __init__ (self, obs_entr, prediccion):
+        self.observaciones_entrada = obs_entr
         self.prediccion = prediccion
         self.limiteMin = -1
         self.limiteMax = 1
-        self.sesgo = sesgo
         self.txAprendizaje = 0.1
-        self.epochs = 300000
+        self.epochs = 3000
         self.Grafica_MSE = []
 
 
@@ -54,12 +53,13 @@ class percepton():
         return media_cuadratica
 
     def aprendizaje (self):
+        sesgo = 1
         for epoch in range(0,self.epochs):
             print("EPOCH ("+str(epoch)+"/"+str(self.epochs)+")")
             predicciones_realizadas_durante_epoch = [];
             predicciones_esperadas = [];
             numObservacion = 0
-            for observacion in self.obs_entr:
+            for observacion in self.observaciones_entrada:
 
                 #Carga de la capa de entrada
                 x1 = observacion[0];
@@ -69,7 +69,7 @@ class percepton():
                 valor_esperado = self.prediccion[numObservacion][0]
 
                 #Etapa 1: Cálculo de la suma ponderada
-                valor_suma_ponderada = percepton.suma_ponderada(x1,w11,x2,w21,self.sesgo,wb)
+                valor_suma_ponderada = percepton.suma_ponderada(x1,w11,x2,w21,sesgo,wb)
 
 
                 #Etapa 2: Aplicación de la función de activación
@@ -93,7 +93,7 @@ class percepton():
 
 
                 # Actualización del peso del sesgo
-                gradiente_Wb = percepton.calculo_gradiente(self.sesgo, valor_predicho, valor_error)
+                gradiente_Wb = percepton.calculo_gradiente(sesgo, valor_predicho, valor_error)
                 valor_ajuste_Wb = percepton.calculo_valor_ajuste(gradiente_Wb, self.txAprendizaje)
                 wb = percepton.calculo_nuevo_peso(wb, valor_ajuste_Wb)
 
@@ -114,8 +114,9 @@ class percepton():
         return array
 
     def prediccion(self, x1, w11, x2, w21, wb):
+        sesgo = 1
         #Etapa 1: Cálculo de la suma ponderada
-        valor_suma_ponderada = percepton.suma_ponderada(x1,w11,x2,w21,self.sesgo,wb)
+        valor_suma_ponderada = percepton.suma_ponderada(x1,w11,x2,w21,wb)
         valor_predicho = percepton.funcion_activacion_sigmoide(valor_suma_ponderada)
 
         print("Predicción del [" + str(x1) + "," + str(x2)  + "]")
@@ -128,7 +129,7 @@ class percepton():
 
 
 def main():
-    percept = percepton(([[1, 0], [1, 1], [0, 1], [0, 0]]), ([[0],[1], [0],[0]]), 1)
+    percept = percepton(([[1, 0], [1, 1], [0, 1], [0, 0]]), ([[0],[1], [0],[0]]))
     peso = percept.pes_inicial()
     print()
     print()
