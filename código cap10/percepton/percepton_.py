@@ -151,8 +151,8 @@ def main():
     Grafica_MSE = percept.aprendizaje(peso[0], peso[1], peso[3])
     x1 = 1
     x2 = 1
-    percept.prediccion( x1, peso[0], x2, peso[1], peso[3])
-    percept.plot(Grafica_MSE)
+    #percept.prediccion( x1, peso[0], x2, peso[1], peso[3])
+    #percept.plot(Grafica_MSE)
 
 
 if __name__ == "__main__":
