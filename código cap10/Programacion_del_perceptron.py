@@ -58,7 +58,7 @@ peso = [w11,w21,w31,wb]
 txAprendizaje = 0.1
 
 #Cantidad de épocas
-epochs = 300000
+epochs = 3000
 
 
 #--------------------------------------
