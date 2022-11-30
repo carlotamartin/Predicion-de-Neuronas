@@ -3,9 +3,10 @@ import matplotlib.pyplot as plt
 
 
 class percepton():
-    def __init__ (self, obs_entr, prediccion):
+    def __init__ (self, obs_entr, prediccion, epochs):
         self.observaciones_entrada = obs_entr
         self.prediccion = prediccion
+        self.epochs = epochs
 
 
 
@@ -57,11 +58,10 @@ class percepton():
         media_cuadratica = 1 / (len(predicciones_esperadas)) * suma
         return media_cuadratica
 
-    def aprendizaje (self):
+    def aprendizaje (self, w11, w21, wb):
         Grafica_MSE = []
         sesgo = 1
         txAprendizaje = 0.1
-        epochs = 3000
         for epoch in range(0,self.epochs):
             print("EPOCH ("+str(epoch)+"/"+str(self.epochs)+")")
             predicciones_realizadas_durante_epoch = [];
@@ -146,12 +146,12 @@ class percepton():
 
 
 def main():
-    percept = percepton(([[1, 0], [1, 1], [0, 1], [0, 0]]), ([[0],[1], [0],[0]]))
+    percept = percepton(([[1, 0], [1, 1], [0, 1], [0, 0]]), ([[0],[1], [0],[0]]), 3000)
     peso = percept.pes_inicial()
-    array, Grafica_MSE = percept.aprendizaje()
+    Grafica_MSE = percept.aprendizaje(peso[0], peso[1], peso[2])
     x1 = 1
     x2 = 1
-    percept.prediccion(x1, array[0], x2, array[1], array[2])
+    percept.prediccion(x1, peso[0], x2, peso[1], peso[2])
     percept.plot(Grafica_MSE)
 
 
