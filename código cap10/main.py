@@ -1,4 +1,4 @@
-from perceptron import percepton, percepton_TF
+from percepton import percepton_, percepton_TF
 
 def mostrar_menu(opciones):
     print('Seleccione una opción:')
@@ -30,14 +30,14 @@ def menu_principal():
     opciones = {
         '1': ('Percepton', accion1),
         '2': ('Percepton con Ténsor Flow', accion2),
-        '6': ('Salir', salir)
+        '3': ('Salir', salir)
     }
-    generar_menu(opciones, '5')
+    generar_menu(opciones, '3')
 
 
 def accion1():
     print('Has elegido la opción de ejecutar Percepton')
-    percepton.main()
+    percepton_.main()
 
 
 def accion2():
